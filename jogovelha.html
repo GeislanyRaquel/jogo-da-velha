@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo da Velha</title>
+</head>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: cursive;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(velhinha.jpg); 
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-position: center; 
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+h1 {
+  text-align: center;
+  color: black;
+}
+
+hr {
+  font-weight: bold;
+  height: 3px;
+  background: black;
+  margin-bottom: 10px;
+}
+
+.game {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.game button {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 50px;
+  background: linear-gradient(to right, #9b59b6, #8e44ad); /* gradiente de lilás a roxo */
+  color: black; /* texto branco */
+  border: none; /* removendo borda */
+}
+
+</style>
+<body>
+  <main>
+    <h1>JOGO DA VELHA</h1>
+    <hr/>
+    <div class="game">
+      <button data-i="1"></button>
+      <button data-i="2"></button>
+      <button data-i="3"></button>
+      <button data-i="4"></button>
+      <button data-i="5"></button>
+      <button data-i="6"></button>
+      <button data-i="7"></button>
+      <button data-i="8"></button>
+      <button data-i="9"></button>
+    </div>
+    <h2 class="jogadorAtual"></h2>
+  </main>
+  <script>
+    var jogadorAtual = document.querySelector(".jogadorAtual");
+
+    var selecionado;
+    var jogador = "X";
+    
+    var posicoes = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9],
+      [1, 5, 9],
+      [3, 5, 7],
+    ];
+    
+    function iniciar() {
+      selecionado = [];
+    
+      jogadorAtual.innerHTML = `Jogador da Vez: ${jogador}`;
+    
+      document.querySelectorAll(".game button").forEach((item) => {
+        item.innerHTML = "";
+        item.addEventListener("click", novaJogada);
+      });
+    }
+    
+    iniciar();
+    
+    function novaJogada(e) {
+      var indice = e.target.getAttribute("data-i");
+      e.target.innerHTML = jogador;
+      e.target.removeEventListener("click", novaJogada);
+      selecionado[indice] = jogador;
+    
+      setTimeout(() => {
+        checar();
+      }, [100]);
+    
+      jogador = jogador === "X" ? "O" : "X";
+      jogadorAtual.innerHTML = `Jogador da Vez: ${jogador}`;
+    }
+    
+    function checar() {
+      var jogadorUltimaJogada = jogador === "X" ? "O" : "X";
+    
+      var itens = selecionado
+        .map((item, i) => [item, i])
+        .filter((item) => item[0] === jogadorUltimaJogada)
+        .map((item) => item[1]);
+    
+      for (pos of posicoes) {
+        if (pos.every((item) => itens.includes(item))) {
+          alert("O jogador '" + jogadorUltimaJogada + "' ganhou!");
+          iniciar();
+          return;
+        }
+      }
+    
+      if (selecionado.filter((item) => item).length === 9) {
+        alert("Deu empate!");
+        iniciar();
+        return;
+      }
+    }
+  </script>
+</body>
+</html>
